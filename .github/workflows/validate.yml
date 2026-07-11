@@ -1,0 +1,39 @@
+name: Validate Scoop manifest
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate manifest JSON
+        shell: pwsh
+        run: |
+          $manifest = Get-Content -Raw shiplog.json | ConvertFrom-Json
+          if ($manifest.version -ne '0.10.0') { throw "unexpected manifest version: $($manifest.version)" }
+          if (-not $manifest.architecture.'64bit'.url) { throw '64-bit URL is missing' }
+          if (-not $manifest.architecture.'64bit'.hash) { throw '64-bit SHA-256 is missing' }
+
+      - name: Download and verify release binary
+        shell: pwsh
+        run: |
+          $manifest = Get-Content -Raw shiplog.json | ConvertFrom-Json
+          $asset = Join-Path $env:RUNNER_TEMP 'shiplog.exe'
+          Invoke-WebRequest -UseBasicParsing -Uri $manifest.architecture.'64bit'.url -OutFile $asset
+          $actual = (Get-FileHash -Algorithm SHA256 -LiteralPath $asset).Hash.ToLowerInvariant()
+          if ($actual -ne $manifest.architecture.'64bit'.hash) {
+            throw "SHA-256 mismatch: expected $($manifest.architecture.'64bit'.hash), got $actual"
+          }
+          $version = & $asset --version
+          if ($version -notmatch [regex]::Escape($manifest.version)) {
+            throw "unexpected shiplog version: $version"
+          }
