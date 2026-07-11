@@ -1,0 +1,23 @@
+{
+  "version": "0.10.0",
+  "description": "Local-first, receipt-backed work evidence and review packets",
+  "homepage": "https://github.com/EffortlessMetrics/shiplog",
+  "license": "MIT OR Apache-2.0",
+  "architecture": {
+    "64bit": {
+      "url": "https://github.com/EffortlessMetrics/shiplog/releases/download/v0.10.0/shiplog-x86_64-pc-windows-msvc.exe",
+      "hash": "f41e1b5970f6ee3f86bf45a96d73564edca602213d78cc6edd3b32aa4ae1eb3a",
+      "bin": [["shiplog-x86_64-pc-windows-msvc.exe", "shiplog"]]
+    }
+  },
+  "checkver": {
+    "github": "https://github.com/EffortlessMetrics/shiplog"
+  },
+  "autoupdate": {
+    "architecture": {
+      "64bit": {
+        "url": "https://github.com/EffortlessMetrics/shiplog/releases/download/v$version/shiplog-x86_64-pc-windows-msvc.exe"
+      }
+    }
+  }
+}
