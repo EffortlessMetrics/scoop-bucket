@@ -19,7 +19,7 @@ jobs:
         shell: pwsh
         run: |
           $manifest = Get-Content -Raw shiplog.json | ConvertFrom-Json
-          if ($manifest.version -ne '0.10.0') { throw "unexpected manifest version: $($manifest.version)" }
+          if ($manifest.version -ne '0.11.0') { throw "unexpected manifest version: $($manifest.version)" }
           if (-not $manifest.architecture.'64bit'.url) { throw '64-bit URL is missing' }
           if (-not $manifest.architecture.'64bit'.hash) { throw '64-bit SHA-256 is missing' }
 
